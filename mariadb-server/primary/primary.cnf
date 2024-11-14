@@ -1,0 +1,3 @@
+[mariadb]
+server_id=1
+log_bin

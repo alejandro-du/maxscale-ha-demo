@@ -1,0 +1,62 @@
+services:
+  mariadb1:
+    image: mariadb:latest
+    container_name: mariadb1
+    environment:
+      MARIADB_ROOT_PASSWORD: root_password
+      MARIADB_DATABASE: demo
+    volumes:
+      - ./mariadb-server/primary/primary.cnf:/etc/mysql/mariadb.conf.d/primary.cnf
+      - ./mariadb-server/primary/primary.sql:/docker-entrypoint-initdb.d/primary.sql
+
+  mariadb2:
+    image: mariadb:latest
+    container_name: mariadb2
+    environment:
+      MARIADB_ROOT_PASSWORD: root_password
+      MARIADB_MASTER_HOST: mariadb1
+      MARIADB_REPLICATION_USER: repl_user
+      MARIADB_REPLICATION_PASSWORD: repl_password
+    volumes:
+      - ./mariadb-server/replica/replica1.cnf:/etc/mysql/mariadb.conf.d/replica1.cnf
+
+  mariadb3:
+    image: mariadb:latest
+    container_name: mariadb3
+    environment:
+      MARIADB_ROOT_PASSWORD: root_password
+      MARIADB_MASTER_HOST: mariadb1
+      MARIADB_REPLICATION_USER: repl_user
+      MARIADB_REPLICATION_PASSWORD: repl_password
+    volumes:
+      - ./mariadb-server/replica/replica2.cnf:/etc/mysql/mariadb.conf.d/replica2.cnf
+
+  maxscale1:
+    image: mariadb/maxscale:24.02
+    container_name: maxscale1
+    volumes:
+      - ./maxscale-proxy/maxscale.cnf:/etc/maxscale.cnf
+    depends_on:
+      - mariadb1
+      - mariadb2
+      - mariadb3
+
+  maxscale2:
+    image: mariadb/maxscale:24.02
+    container_name: maxscale2
+    volumes:
+      - ./maxscale-proxy/maxscale.cnf:/etc/maxscale.cnf
+    depends_on:
+      - mariadb1
+      - mariadb2
+      - mariadb3
+
+  maxscale3:
+    image: mariadb/maxscale:24.02
+    container_name: maxscale3
+    volumes:
+      - ./maxscale-proxy/maxscale.cnf:/etc/maxscale.cnf
+    depends_on:
+      - mariadb1
+      - mariadb2
+      - mariadb3
