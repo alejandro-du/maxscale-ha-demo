@@ -1,3 +1,8 @@
 [mariadb]
 server_id=3
 log_bin
+gtid_strict_mode=ON
+log_slave_updates=ON
+sysdate_is_now=ON
+session_track_system_variables=last_gtid
+read_only=ON

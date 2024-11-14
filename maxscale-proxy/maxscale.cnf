@@ -1,5 +1,8 @@
 [maxscale]
 threads=auto
+admin_host=0.0.0.0
+admin_secure_gui=false
+admin_auth=false
 
 [mariadb1]
 type=server
@@ -25,12 +28,18 @@ router=readwritesplit
 servers=mariadb1,mariadb2,mariadb3
 user=max_user
 password=max_password
+master_reconnection=true
+master_failure_mode=fail_on_write
+transaction_replay=true
+transaction_replay_retry_on_deadlock=true
+transaction_replay_retry_on_mismatch=true
+causal_reads=fast_universal
 
 [Splitter-Listener]
 type=listener
 service=Splitter-Service
 protocol=MariaDBClient
-port=4006
+port=4000
 
 [Monitor]
 type=monitor
@@ -38,6 +47,12 @@ module=mariadbmon
 servers=mariadb1,mariadb2,mariadb3
 user=max_user
 password=max_password
-monitor_interval=2000ms
 auto_failover=true
+auto_rejoin=true
+failcount=1
+backend_connect_timeout=1000ms
+backend_read_timeout=1000ms
+backend_write_timeout=1000ms
+master_failure_timeout=1000ms
+monitor_interval=1000ms
 cooperative_monitoring_locks=majority_of_all
