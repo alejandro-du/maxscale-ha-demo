@@ -31,6 +31,8 @@ docker logs mariadb1
 docker logs maxscale1
 ```
 
+**Note:** For demo purposes, an NGINX service is included as a way to access MaxScale's GUI using a single endpoint. This is not part of the HA setup. If you like the approach make sure to have multiple instances of NGINX and use techniques like DNS-level failover or use cloud-managed load balancers. Don't connect your applications to an NGINX proxy with this setup—that's the whole purpose of the more database-specific MaxScale database proxy!
+
 ## Testing high availability
 
 1. Connect your application to the database using one of the MariaDB Connectors. Make sure to activate _transaction replay_ and use the _sequential_ mode to specify all the three hosts running MaxScale. For example, in a Java application use the following JDBC connection string:
